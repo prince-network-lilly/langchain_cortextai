@@ -7,13 +7,13 @@ A **LangChain-style Python framework** that wraps the [Lilly Cortex AI API](http
 One command — `light_client` is pulled in automatically from GitHub:
 
 ```bash
-pip install git+https://github.com/YOUR_USERNAME/cortexchain.git
+pip install git+https://github.com/prince-network-lilly/langchain_cortextai.git
 ```
 
 To pin a specific version/tag:
 
 ```bash
-pip install git+https://github.com/YOUR_USERNAME/cortexchain.git@v0.1.0
+pip install git+https://github.com/prince-network-lilly/langchain_cortextai.git@v0.1.0
 ```
 
 ---
@@ -150,8 +150,8 @@ class MyTool(BaseTool):
 ## Development
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/cortexchain.git
-cd cortexchain
+git clone https://github.com/prince-network-lilly/langchain_cortextai.git
+cd langchain_cortextai
 pip install -e ".[dev]"
 pytest
 ```
