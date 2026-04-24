@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "cortexchain"
+version = "0.1.0"
+description = "LangChain-style framework for the Lilly Cortex AI API"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "light_client @ git+https://github.com/EliLillyCo/LRL_light_k8s_infra_app_client_python.git@bdf0e2cf27260862b1e5615929e176f62e83a4a4",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-mock"]
+
+[tool.setuptools.packages.find]
+where = ["."]
