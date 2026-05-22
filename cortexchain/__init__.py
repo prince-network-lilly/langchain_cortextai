@@ -38,9 +38,9 @@ from cortexchain.toolkits import MLOpsToolkit, DataToolkit, DevToolkit, APIToolk
 from cortexchain.utils import retry, RetryConfig, FallbackChain, LLMCache, RateLimiter, RateLimitedLLM, BatchProcessor, BatchResult
 from cortexchain.schema import LLMResult, Message, Document, AgentAction, AgentFinish, GraphState
 from cortexchain.exceptions import (
-    CortexChainError, LLMError, ChainError, ToolError, ParserError,
-    ValidationError as SchemaValidationError, GraphError, TimeoutError as CortexTimeoutError,
-    RateLimitError, ConfigError,
+    CortexChainError, LLMError, ChainError, ToolError, OutputParserError,
+    ValidationError as SchemaValidationError, GraphError, LLMTimeoutError as CortexTimeoutError,
+    LLMRateLimitError as RateLimitError, ConfigError,
 )
 from cortexchain.config import CortexConfig
 from cortexchain.logging import setup_logging, get_logger, set_level, quiet, verbose
@@ -161,7 +161,7 @@ __all__ = [
     "LLMError",
     "ChainError",
     "ToolError",
-    "ParserError",
+    "OutputParserError",
     "SchemaValidationError",
     "GraphError",
     "CortexTimeoutError",
