@@ -25,6 +25,19 @@ class Message:
 
 
 @dataclass
+class Document:
+    """A piece of text with associated metadata (used for RAG, loaders, splitters)."""
+    page_content: str
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def __str__(self) -> str:
+        return self.page_content
+
+    def __len__(self) -> int:
+        return len(self.page_content)
+
+
+@dataclass
 class AgentAction:
     tool: str
     tool_input: str
@@ -35,3 +48,25 @@ class AgentAction:
 class AgentFinish:
     output: str
     log: str
+
+
+@dataclass
+class GraphState:
+    """State object passed through graph nodes."""
+    data: Dict[str, Any] = field(default_factory=dict)
+
+    def __getitem__(self, key: str) -> Any:
+        return self.data[key]
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self.data[key] = value
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return self.data.get(key, default)
+
+    def update(self, other: Dict[str, Any]) -> None:
+        self.data.update(other)
+
+    def copy(self) -> "GraphState":
+        return GraphState(data=self.data.copy())
+

@@ -25,6 +25,8 @@ ENV/
 .pytest_cache/
 .coverage
 htmlcov/
+coverage.xml
+.mypy_cache/
 
 # OS
 .DS_Store
@@ -38,3 +40,20 @@ Thumbs.db
 .env
 .env.*
 secrets.py
+.secrets.baseline
+
+# CortexChain artifacts
+.llm_cache/
+checkpoints/
+*.log
+cortexchain.log
+
+# Profiling
+*.prof
+profile_results/
+
+# Documentation build
+site/
+
+# Security reports
+bandit-report.json

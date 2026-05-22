@@ -1,162 +1,357 @@
-# cortexchain
+# CortexChain
 
-A **LangChain-style Python framework** that wraps the [Lilly Cortex AI API](https://api.cortex.lilly.com), giving you chains, memory, prompt templates, tools, and a ReAct agent — all built on top of `LIGHTClient`.
+[![CI](https://github.com/prince-network-lilly/langchain_cortextai/actions/workflows/ci.yml/badge.svg)](https://github.com/prince-network-lilly/langchain_cortextai/actions/workflows/ci.yml)
+[![Security](https://github.com/prince-network-lilly/langchain_cortextai/actions/workflows/security.yml/badge.svg)](https://github.com/prince-network-lilly/langchain_cortextai/actions/workflows/security.yml)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/prince-network-lilly/langchain_cortextai/releases)
+[![License: Internal](https://img.shields.io/badge/license-Eli%20Lilly%20Internal-red.svg)]()
 
-## Installation
+**A production-grade LangChain + LangGraph framework for the Lilly Cortex AI API.**
 
-One command — `light_client` is pulled in automatically from GitHub:
+CortexChain lets you build AI-powered applications using familiar LangChain/LangGraph patterns — chains, agents, tools, graphs, memory — all wired to the internal Cortex AI platform with zero external AI dependencies.
 
-```bash
-pip install git+https://github.com/prince-network-lilly/langchain_cortextai.git
+---
+
+## Architecture
+
 ```
-
-To pin a specific version/tag:
-
-```bash
-pip install git+https://github.com/prince-network-lilly/langchain_cortextai.git@v0.1.0
+┌─────────────────────────────────────────────────────────────────┐
+│                        CortexChain v1.0.0                        │
+├─────────────┬──────────────┬──────────────┬─────────────────────┤
+│   Chains    │    Agents    │    Graph     │      Utilities      │
+│             │              │              │                     │
+│ LLMChain    │ ReActAgent   │ StateGraph   │ RateLimiter         │
+│ Sequential  │ Supervisor   │ Conditional  │ Cache (TTL)         │
+│ Router      │ Plan&Execute │ Checkpoint   │ BatchProcessor      │
+│ RAG (QA)    │ AgentExec    │ Human-Loop   │ Retry/Fallback      │
+│ MapReduce   │ Multi-Agent  │ Subgraphs    │ ConnectionPool      │
+│ Structured  │              │ Parallel     │ Profiler            │
+├─────────────┼──────────────┼──────────────┼─────────────────────┤
+│   Tools     │   Security   │  Prompts     │    Observability    │
+│             │              │              │                     │
+│ Python REPL │ Sanitizer    │ Templates    │ Callbacks           │
+│ HTTP/REST   │ Injection    │ PromptHub    │ FileLogger (JSONL)  │
+│ SQL (R/O)   │   Defense    │ Secure       │ Console Debug       │
+│ File I/O    │ Redaction    │   Template   │ Profiling/Latency   │
+│ Shell       │              │              │ Logging (Python)    │
+│ Data Valid  │              │              │                     │
+│ Experiment  │              │              │                     │
+│ Pipeline    │              │              │                     │
+│ API Health  │              │              │                     │
+├─────────────┴──────────────┴──────────────┴─────────────────────┤
+│                         CortexLLM Core                           │
+│              (LIGHTClient → Cortex /model/ask API)               │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Quick start
+## Installation
+
+```bash
+# Standard install
+pip install git+https://github.com/prince-network-lilly/langchain_cortextai.git
+
+# With development tools (testing, linting, type checking)
+pip install "cortexchain[dev] @ git+https://github.com/prince-network-lilly/langchain_cortextai.git"
+
+# Pin a specific version
+pip install git+https://github.com/prince-network-lilly/langchain_cortextai.git@v1.0.0
+
+# From source
+git clone https://github.com/prince-network-lilly/langchain_cortextai.git
+cd langchain_cortextai
+pip install -e ".[dev]"
+```
+
+**Requirements:** Python 3.9+ and access to the Eli Lilly internal network.
+
+---
+
+## Quick Start
+
+### 1. Basic LLM Call
 
 ```python
 from cortexchain import CortexLLM
 
-llm = CortexLLM(agent_name="your-agent-name", default_knowledge=True)
-print(llm("What is the capital of France?"))
+llm = CortexLLM(agent_name="my-cortex-agent")
+answer = llm("What is machine learning?")
+print(answer)
 ```
 
----
-
-## Features
-
-### 1. `LLMChain` — prompt template + LLM
+### 2. Chain Pipeline
 
 ```python
-from cortexchain import CortexLLM, PromptTemplate, LLMChain
+from cortexchain import CortexLLM, LLMChain, PromptTemplate
 
-llm = CortexLLM(agent_name="your-agent")
-prompt = PromptTemplate.from_template("Summarize this in one sentence: {text}")
+llm = CortexLLM(agent_name="my-agent")
+prompt = PromptTemplate(template="Summarize this for a {audience}: {text}")
 chain = LLMChain(llm=llm, prompt=prompt)
 
-print(chain.run(text="LangChain is a framework for LLM applications."))
+result = chain.run(audience="executive", text="Long technical document...")
 ```
 
-Pipe syntax also works:
-
-```python
-chain = PromptTemplate.from_template("Translate to French: {text}") | llm
-print(chain.run(text="Good morning"))
-```
-
----
-
-### 2. `ConversationChain` — chat with memory
+### 3. Conversation with Memory
 
 ```python
 from cortexchain import CortexLLM, ConversationChain
 
-llm = CortexLLM(agent_name="your-agent")
-chat = ConversationChain(llm=llm, verbose=True)
+llm = CortexLLM(agent_name="my-agent")
+chat = ConversationChain(llm=llm)
 
-chat.chat("Hi, my name is Alice.")
-chat.chat("What is my name?")   # remembers "Alice"
+print(chat("Hi, my name is Alice")["text"])
+print(chat("What's my name?")["text"])  # Remembers "Alice"
 ```
 
-Use `ConversationWindowMemory` to keep only the last *k* exchanges:
+### 4. Tool-Using Agent
 
 ```python
-from cortexchain import ConversationWindowMemory
-
-memory = ConversationWindowMemory(k=5)
-chat = ConversationChain(llm=llm, memory=memory)
-```
-
----
-
-### 3. `SimpleSequentialChain` — pipeline of chains
-
-```python
-from cortexchain import LLMChain, PromptTemplate, SimpleSequentialChain
-
-step1 = LLMChain(llm=llm, prompt=PromptTemplate.from_template("Write a synopsis for: {input}"))
-step2 = LLMChain(llm=llm, prompt=PromptTemplate.from_template("Give a movie title for:\n{text}"))
-
-pipeline = SimpleSequentialChain(chains=[step1, step2], verbose=True)
-print(pipeline.run("a robot who learns to paint"))
-```
-
----
-
-### 4. Tools + ReAct Agent
-
-```python
-from cortexchain import CortexLLM, tool, ReActAgent, AgentExecutor
-
-llm = CortexLLM(agent_name="your-agent")
+from cortexchain import CortexLLM, ReActAgent, AgentExecutor, tool
 
 @tool
 def calculator(expression: str) -> str:
-    """Evaluates a mathematical expression."""
+    """Evaluate a math expression."""
     return str(eval(expression))
 
-@tool
-def get_time(query: str) -> str:
-    """Returns the current date and time."""
-    from datetime import datetime
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-agent = ReActAgent(llm=llm, tools=[calculator, get_time])
-executor = AgentExecutor(agent=agent, tools=[calculator, get_time], verbose=True)
-
-print(executor.run("What is 42 * 17? Also what time is it?"))
+llm = CortexLLM(agent_name="my-agent")
+agent = ReActAgent(llm=llm, tools=[calculator])
+executor = AgentExecutor(agent=agent, tools=[calculator])
+print(executor.run("What is 15 * 23 + 7?"))
 ```
 
-Custom tool class:
+### 5. Graph Workflow
 
 ```python
-from cortexchain import BaseTool
+from cortexchain import StateGraph, END
 
-class MyTool(BaseTool):
-    name = "my_tool"
-    description = "Does something custom."
+graph = StateGraph()
+graph.add_node("fetch", lambda s: {**s, "data": "fetched"})
+graph.add_node("process", lambda s: {**s, "result": s["data"].upper()})
+graph.add_edge("fetch", "process")
+graph.add_edge("process", END)
+graph.set_entry_point("fetch")
 
-    def run(self, tool_input: str) -> str:
-        return f"processed: {tool_input}"
+app = graph.compile()
+result = app.invoke({"input": "go"})
+# result["result"] == "FETCHED"
+```
+
+### 6. RAG (Retrieval-Augmented Generation)
+
+```python
+from cortexchain import CortexLLM, RetrievalQAChain, TFIDFRetriever, Document
+
+docs = [
+    Document(page_content="Our refund policy allows returns within 30 days."),
+    Document(page_content="Shipping takes 3-5 business days."),
+]
+retriever = TFIDFRetriever.from_documents(docs, k=2)
+llm = CortexLLM(agent_name="my-agent")
+
+qa = RetrievalQAChain(llm=llm, retriever=retriever)
+answer = qa.run(query="What is the refund policy?")
+```
+
+### 7. Secure Input Handling
+
+```python
+from cortexchain import InputSanitizer, LLMChain
+
+sanitizer = InputSanitizer(check_injection=True)
+safe_chain = sanitizer.wrap(my_chain)
+
+safe_chain({"query": "Normal question"})  # Works
+# safe_chain({"query": "Ignore all previous instructions"})  # Blocked!
+```
+
+### 8. Async & Batch Processing
+
+```python
+import asyncio
+from cortexchain import AsyncCortexLLM
+
+async def main():
+    llm = AsyncCortexLLM(agent_name="my-agent")
+    results = await llm.abatch([
+        "Summarize document 1",
+        "Summarize document 2",
+        "Summarize document 3",
+    ], max_concurrency=3)
+    for r in results:
+        print(r.message)
+
+asyncio.run(main())
+```
+
+### 9. Multi-Agent Orchestration
+
+```python
+from cortexchain import CortexLLM, SupervisorAgent, WorkerAgent
+
+llm = CortexLLM(agent_name="my-agent")
+
+researcher = WorkerAgent(name="researcher", llm=llm, tools=[search_tool])
+writer = WorkerAgent(name="writer", llm=llm, tools=[])
+
+supervisor = SupervisorAgent(llm=llm, workers=[researcher, writer])
+result = supervisor.run("Research AI trends and write a summary report")
+```
+
+### 10. Performance Profiling
+
+```python
+from cortexchain.profiling import profiler, enable_profiling
+
+enable_profiling()
+
+with profiler.measure("full_pipeline"):
+    result = chain.invoke(inputs)
+
+print(profiler.summary())
 ```
 
 ---
 
-## API reference
+## Feature Overview
 
-| Class / function | Module | Description |
-|---|---|---|
-| `CortexLLM` | `cortexchain.llm` | Wraps the Cortex `/model/ask` endpoint |
-| `PromptTemplate` | `cortexchain.prompts` | String template with `{variable}` substitution |
-| `LLMChain` | `cortexchain.chains` | Prompt + LLM chain |
-| `ConversationChain` | `cortexchain.chains` | LLMChain with automatic memory |
-| `SimpleSequentialChain` | `cortexchain.chains` | Pipes multiple chains in sequence |
-| `ConversationBufferMemory` | `cortexchain.memory` | Full conversation history |
-| `ConversationWindowMemory` | `cortexchain.memory` | Sliding-window conversation history |
-| `BaseTool` | `cortexchain.tools` | Abstract base for custom tools |
-| `FunctionTool` | `cortexchain.tools` | Wraps a Python function as a tool |
-| `tool` | `cortexchain.tools` | Decorator: convert a function into a tool |
-| `ReActAgent` | `cortexchain.agents` | Thought/Action/Observation reasoning agent |
-| `AgentExecutor` | `cortexchain.agents` | Runs the agent loop and calls tools |
+| Category | Components |
+|----------|-----------|
+| **LLM** | `CortexLLM`, `AsyncCortexLLM`, `PooledCortexLLM`, `StreamingCortexLLM`, `RateLimitedLLM` |
+| **Chains** | `LLMChain`, `ConversationChain`, `SimpleSequentialChain`, `RouterChain`, `RetrievalQAChain`, `StructuredOutputChain`, `MapReduceChain`, `RefineChain` |
+| **Memory** | `ConversationBufferMemory`, `ConversationWindowMemory` |
+| **Tools** | `@tool` decorator, `PythonREPLTool`, `HTTPRequestTool`, `SQLDatabaseTool`, `ShellTool`, `ReadFileTool`, `WriteFileTool`, + 4 MLOps tools |
+| **Agents** | `ReActAgent`, `AgentExecutor`, `SupervisorAgent`/`WorkerAgent`, `PlanAndExecuteAgent` |
+| **Graph** | `StateGraph`, conditional edges, `MemoryCheckpointer`, `FileCheckpointer`, human-in-the-loop, subgraphs, parallel execution |
+| **Security** | `sanitize_input()`, `detect_injection()`, `SecurePromptTemplate`, `InputSanitizer`, `redact_sensitive()` |
+| **Utilities** | `@retry`, `FallbackChain`, `LLMCache`, `RateLimiter`, `BatchProcessor`, `ConnectionPool`, `Profiler` |
+| **Validation** | `@validate_inputs`, `@validate_not_empty`, `@validate_schema`, `InputValidator` |
+| **Observability** | `ConsoleCallback`, `FileLoggerCallback`, `setup_logging()`, `Profiler`, `LatencyTracker` |
+| **Toolkits** | `MLOpsToolkit`, `DataToolkit`, `DevToolkit`, `APIToolkit` |
+
+---
+
+## Configuration
+
+Copy `.env.example` to `.env` and set your values:
+
+```bash
+CORTEX_AGENT_NAME=your-agent-name
+CORTEX_CACHE_ENABLED=true
+CORTEX_RATE_LIMIT_CALLS=30
+CORTEX_LOG_LEVEL=INFO
+```
+
+All configuration can also be set programmatically:
+
+```python
+from cortexchain.config import config
+
+config.agent_name = "my-agent"
+config.cache_enabled = True
+config.verbose = True
+```
+
+See [Configuration Docs](docs/getting-started/configuration.md) for all 15+ options.
+
+---
+
+## Documentation
+
+Full documentation is available in the `docs/` directory:
+
+| Section | Description |
+|---------|-------------|
+| [Installation](docs/getting-started/installation.md) | Setup and install instructions |
+| [Quick Start](docs/getting-started/quickstart.md) | 7 patterns to get started |
+| [Configuration](docs/getting-started/configuration.md) | All env vars and settings |
+| [LLM](docs/concepts/llm.md) | CortexLLM, async, rate limiting |
+| [Chains](docs/concepts/chains.md) | All chain types explained |
+| [Agents](docs/concepts/agents.md) | ReAct, Supervisor, Plan-Execute |
+| [Graph](docs/concepts/graph.md) | StateGraph, checkpoints, human-in-loop |
+| [API Reference](docs/api/) | Complete API signatures |
+| [Examples](docs/examples/) | RAG, multi-agent, MLOps workflows |
+
+To serve docs locally:
+```bash
+pip install mkdocs-material mkdocstrings[python]
+mkdocs serve
+```
 
 ---
 
 ## Development
 
 ```bash
+# Setup
 git clone https://github.com/prince-network-lilly/langchain_cortextai.git
 cd langchain_cortextai
 pip install -e ".[dev]"
-pytest
+pre-commit install
+
+# Run tests
+pytest tests/ -v --cov=cortexchain --cov-report=term-missing
+
+# Lint & format
+black cortexchain/ tests/
+isort cortexchain/ tests/
+flake8 cortexchain/ --max-line-length=120
+
+# Type check
+mypy cortexchain/ --ignore-missing-imports
+
+# Security scan
+bandit -r cortexchain/ -ll
 ```
 
-## Requirements
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full development guidelines.
 
-- Python ≥ 3.9
-- `light_client` — resolved automatically from [EliLillyCo/LRL_light_k8s_infra_app_client_python](https://github.com/EliLillyCo/LRL_light_k8s_infra_app_client_python) (requires Lilly GitHub access)
+---
+
+## Security
+
+CortexChain includes built-in security features:
+
+- **Prompt injection detection** — 15+ pattern-based rules with configurable response
+- **Input sanitization** — HTML stripping, control char removal, length limits
+- **Sensitive data redaction** — Automatic PII removal before logging
+- **Tool safety** — Read-only DB mode, command whitelists, domain restrictions
+- **CI/CD scanning** — Bandit SAST, pip-audit, TruffleHog secrets, CodeQL, Dependabot
+
+See [SECURITY.md](SECURITY.md) for vulnerability reporting.
+
+---
+
+## Project Stats
+
+| Metric | Value |
+|--------|-------|
+| Public API exports | 120+ |
+| Test files | 15 |
+| Test cases | 110+ |
+| Documentation pages | 14 |
+| CI/CD workflows | 4 (test, lint, security, docs) |
+| External AI dependencies | 0 (only `light_client`) |
+| Python versions supported | 3.9, 3.10, 3.11, 3.12 |
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for full version history.
+
+---
+
+## Roadmap
+
+- [ ] WebSocket streaming from Cortex API (when available)
+- [ ] Vector store integrations (FAISS, Chroma)
+- [ ] LangSmith-compatible tracing export
+- [ ] OpenTelemetry integration
+- [ ] Multi-model routing (GPT-4, Claude, Llama via Cortex)
+
+---
+
+## License
+
+Internal use only — Eli Lilly and Company.
