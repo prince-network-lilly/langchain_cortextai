@@ -57,7 +57,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 black isort
+          pip install flake8 "black==24.4.2" isort
 
       - name: Check formatting with black
         run: black --check --target-version py39 --line-length 120 cortexchain/ tests/
