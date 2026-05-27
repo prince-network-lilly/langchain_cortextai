@@ -1,4 +1,5 @@
 """Human-in-the-loop — interrupt graph execution for human review/approval."""
+
 from typing import Any, Callable, Dict, Optional
 
 
@@ -113,6 +114,7 @@ def require_approval(message: str = "Continue?"):
         def train_model(state):
             ...
     """
+
     def decorator(func: Callable) -> Callable:
         def wrapper(state: Dict) -> Dict:
             if state.get("__human_decision__") == "approve":
@@ -129,6 +131,8 @@ def require_approval(message: str = "Continue?"):
                 return func(state)
             state["__skipped__"] = func.__name__
             return state
+
         wrapper.__name__ = func.__name__
         return wrapper
+
     return decorator

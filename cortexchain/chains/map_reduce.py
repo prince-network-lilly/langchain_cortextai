@@ -1,4 +1,5 @@
 """MapReduceChain — process documents in parallel (map) then combine results (reduce)."""
+
 from typing import Callable, Dict, List, Optional
 
 from cortexchain.chains.base import BaseChain
@@ -52,9 +53,7 @@ class MapReduceChain(BaseChain):
     def _reduce(self, mapped_results: List[str]) -> str:
         if self.reduce_fn:
             return self.reduce_fn(mapped_results)
-        combined = "\n\n---\n\n".join(
-            f"[Part {i+1}]: {r}" for i, r in enumerate(mapped_results)
-        )
+        combined = "\n\n---\n\n".join(f"[Part {i+1}]: {r}" for i, r in enumerate(mapped_results))
         prompt = self.reduce_prompt.format(summaries=combined)
         return self.llm(prompt)
 

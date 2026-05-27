@@ -1,4 +1,5 @@
 """Tests for cortexchain.retrievers.tfidf"""
+
 from cortexchain.retrievers.tfidf import TFIDFRetriever
 from cortexchain.schema import Document
 
@@ -24,10 +25,12 @@ def test_empty_retriever():
 
 def test_add_documents():
     retriever = TFIDFRetriever(k=2)
-    retriever.add_documents([
-        Document(page_content="Hello world"),
-        Document(page_content="Goodbye world"),
-    ])
+    retriever.add_documents(
+        [
+            Document(page_content="Hello world"),
+            Document(page_content="Goodbye world"),
+        ]
+    )
     results = retriever.retrieve("Hello")
     assert len(results) == 2
     assert results[0].page_content == "Hello world"

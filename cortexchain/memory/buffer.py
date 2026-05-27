@@ -41,7 +41,7 @@ class ConversationWindowMemory(ConversationBufferMemory):
         self.k = k
 
     def get_history_string(self) -> str:
-        recent = self.messages[-(self.k * 2):]
+        recent = self.messages[-(self.k * 2) :]
         lines = []
         for msg in recent:
             prefix = self.human_prefix if msg.role == "human" else self.ai_prefix

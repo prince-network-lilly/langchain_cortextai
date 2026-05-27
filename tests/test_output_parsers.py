@@ -1,4 +1,5 @@
 """Tests for cortexchain.output_parsers"""
+
 import pytest
 from cortexchain.output_parsers.json_parser import JSONOutputParser
 from cortexchain.output_parsers.list_parser import ListOutputParser

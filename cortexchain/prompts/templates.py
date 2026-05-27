@@ -7,9 +7,7 @@ class PromptTemplate:
 
     def __init__(self, template: str, input_variables: Optional[List[str]] = None):
         self.template = template
-        self.input_variables = input_variables or list(
-            dict.fromkeys(re.findall(r"\{(\w+)\}", template))
-        )
+        self.input_variables = input_variables or list(dict.fromkeys(re.findall(r"\{(\w+)\}", template)))
 
     def format(self, **kwargs) -> str:
         return self.template.format(**kwargs)
@@ -21,6 +19,7 @@ class PromptTemplate:
     def __or__(self, llm):
         """Support pipe syntax: prompt | llm  ->  LLMChain."""
         from cortexchain.chains.llm_chain import LLMChain
+
         return LLMChain(llm=llm, prompt=self)
 
     def __repr__(self) -> str:

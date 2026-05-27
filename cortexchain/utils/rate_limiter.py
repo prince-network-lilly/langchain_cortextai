@@ -1,4 +1,5 @@
 """Rate limiter — throttle API calls to stay within rate limits."""
+
 import time
 import threading
 from typing import Optional
@@ -42,9 +43,11 @@ class RateLimiter:
 
     def __call__(self, func):
         """Use as a decorator to rate-limit a function."""
+
         def wrapper(*args, **kwargs):
             self.acquire()
             return func(*args, **kwargs)
+
         wrapper.__name__ = getattr(func, "__name__", "wrapped")
         return wrapper
 

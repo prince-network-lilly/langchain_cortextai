@@ -3,6 +3,7 @@
 
 class CortexChainError(Exception):
     """Base exception for all cortexchain errors."""
+
     pass
 
 
@@ -17,16 +18,19 @@ class LLMError(CortexChainError):
 
 class LLMConnectionError(LLMError):
     """Raised when the LLM API is unreachable."""
+
     pass
 
 
 class LLMTimeoutError(LLMError):
     """Raised when the LLM API call times out."""
+
     pass
 
 
 class LLMRateLimitError(LLMError):
     """Raised when the LLM API returns a rate limit response."""
+
     pass
 
 
@@ -67,11 +71,13 @@ class GraphError(CortexChainError):
 
 class GraphNodeNotFoundError(GraphError):
     """Raised when a graph node is referenced but doesn't exist."""
+
     pass
 
 
 class GraphCycleError(GraphError):
     """Raised when a graph has an infinite cycle."""
+
     pass
 
 
@@ -86,6 +92,7 @@ class ValidationError(CortexChainError):
 
 class ConfigError(CortexChainError):
     """Raised when configuration is invalid or missing."""
+
     pass
 
 

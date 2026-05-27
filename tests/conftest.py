@@ -1,4 +1,5 @@
 """conftest.py — shared test fixtures for cortexchain tests."""
+
 import pytest
 from unittest.mock import patch, MagicMock
 from cortexchain.schema import LLMResult, Document
@@ -33,6 +34,7 @@ def mock_light_client(mock_cortex_response):
 def cortex_llm(mock_light_client):
     """A CortexLLM instance with mocked network."""
     from cortexchain.llm.cortex import CortexLLM
+
     return CortexLLM(agent_name="test-agent")
 
 

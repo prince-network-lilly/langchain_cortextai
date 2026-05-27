@@ -27,6 +27,7 @@ class Message:
 @dataclass
 class Document:
     """A piece of text with associated metadata (used for RAG, loaders, splitters)."""
+
     page_content: str
     metadata: Dict[str, Any] = field(default_factory=dict)
 
@@ -53,6 +54,7 @@ class AgentFinish:
 @dataclass
 class GraphState:
     """State object passed through graph nodes."""
+
     data: Dict[str, Any] = field(default_factory=dict)
 
     def __getitem__(self, key: str) -> Any:
@@ -69,4 +71,3 @@ class GraphState:
 
     def copy(self) -> "GraphState":
         return GraphState(data=self.data.copy())
-

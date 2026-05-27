@@ -1,4 +1,5 @@
 """Connection pooling and session management for CortexLLM."""
+
 import threading
 import time
 from typing import Dict, Optional, Any
@@ -8,6 +9,7 @@ from dataclasses import dataclass, field
 @dataclass
 class SessionConfig:
     """Configuration for session management."""
+
     pool_size: int = 4
     max_idle_time: float = 300.0
     retry_on_disconnect: bool = True
@@ -47,6 +49,7 @@ class ConnectionPool:
     @staticmethod
     def _default_factory():
         from light_client import LIGHTClient
+
         return LIGHTClient()
 
     def acquire(self, timeout: float = 30.0):

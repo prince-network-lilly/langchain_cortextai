@@ -1,4 +1,5 @@
 """Async support for CortexLLM — uses asyncio + threading to avoid blocking."""
+
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, AsyncIterator
@@ -33,9 +34,7 @@ class AsyncCortexLLM:
 
     async def ainvoke(self, prompt: str, chat_history: str = "") -> LLMResult:
         loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(
-            self._executor, self._sync_llm.invoke, prompt, chat_history
-        )
+        return await loop.run_in_executor(self._executor, self._sync_llm.invoke, prompt, chat_history)
 
     async def __call__(self, prompt: str, chat_history: str = "") -> str:
         result = await self.ainvoke(prompt, chat_history)

@@ -1,4 +1,5 @@
 """Tests for cortexchain.profiling"""
+
 import time
 from cortexchain.profiling import Profiler, LatencyTracker, enable_profiling, disable_profiling
 

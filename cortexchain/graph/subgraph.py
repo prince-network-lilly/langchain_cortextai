@@ -1,4 +1,5 @@
 """Subgraph support — use a compiled graph as a node inside a parent graph."""
+
 from typing import Callable, Dict, List, Optional
 from cortexchain.graph.state_graph import CompiledGraph, StateGraph, END
 
@@ -112,10 +113,7 @@ class ParallelThreadedNode:
 
         results = {}
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            futures = {
-                name: executor.submit(fn, state.copy())
-                for name, fn in self.branches.items()
-            }
+            futures = {name: executor.submit(fn, state.copy()) for name, fn in self.branches.items()}
             for name, future in futures.items():
                 try:
                     result = future.result(timeout=120)

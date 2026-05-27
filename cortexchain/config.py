@@ -1,4 +1,5 @@
 """Central configuration management for cortexchain."""
+
 import os
 from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
@@ -20,60 +21,36 @@ class CortexConfig:
     """
 
     # API settings
-    base_url: str = field(default_factory=lambda: os.getenv(
-        "CORTEX_BASE_URL", "https://api.cortex.lilly.com"
-    ))
-    agent_name: str = field(default_factory=lambda: os.getenv(
-        "CORTEX_AGENT_NAME", ""
-    ))
-    default_knowledge: bool = field(default_factory=lambda: os.getenv(
-        "CORTEX_DEFAULT_KNOWLEDGE", "false"
-    ).lower() in ("true", "1", "yes"))
+    base_url: str = field(default_factory=lambda: os.getenv("CORTEX_BASE_URL", "https://api.cortex.lilly.com"))
+    agent_name: str = field(default_factory=lambda: os.getenv("CORTEX_AGENT_NAME", ""))
+    default_knowledge: bool = field(
+        default_factory=lambda: os.getenv("CORTEX_DEFAULT_KNOWLEDGE", "false").lower() in ("true", "1", "yes")
+    )
 
     # Timeouts
-    request_timeout: int = field(default_factory=lambda: int(os.getenv(
-        "CORTEX_TIMEOUT", "120"
-    )))
+    request_timeout: int = field(default_factory=lambda: int(os.getenv("CORTEX_TIMEOUT", "120")))
 
     # Rate limiting
-    rate_limit_calls: int = field(default_factory=lambda: int(os.getenv(
-        "CORTEX_RATE_LIMIT_CALLS", "60"
-    )))
-    rate_limit_period: float = field(default_factory=lambda: float(os.getenv(
-        "CORTEX_RATE_LIMIT_PERIOD", "60"
-    )))
+    rate_limit_calls: int = field(default_factory=lambda: int(os.getenv("CORTEX_RATE_LIMIT_CALLS", "60")))
+    rate_limit_period: float = field(default_factory=lambda: float(os.getenv("CORTEX_RATE_LIMIT_PERIOD", "60")))
 
     # Retry settings
-    max_retries: int = field(default_factory=lambda: int(os.getenv(
-        "CORTEX_MAX_RETRIES", "3"
-    )))
-    retry_delay: float = field(default_factory=lambda: float(os.getenv(
-        "CORTEX_RETRY_DELAY", "1.0"
-    )))
+    max_retries: int = field(default_factory=lambda: int(os.getenv("CORTEX_MAX_RETRIES", "3")))
+    retry_delay: float = field(default_factory=lambda: float(os.getenv("CORTEX_RETRY_DELAY", "1.0")))
 
     # Cache settings
-    cache_enabled: bool = field(default_factory=lambda: os.getenv(
-        "CORTEX_CACHE_ENABLED", "false"
-    ).lower() in ("true", "1", "yes"))
-    cache_ttl: int = field(default_factory=lambda: int(os.getenv(
-        "CORTEX_CACHE_TTL", "3600"
-    )))
-    cache_dir: str = field(default_factory=lambda: os.getenv(
-        "CORTEX_CACHE_DIR", ".llm_cache"
-    ))
+    cache_enabled: bool = field(
+        default_factory=lambda: os.getenv("CORTEX_CACHE_ENABLED", "false").lower() in ("true", "1", "yes")
+    )
+    cache_ttl: int = field(default_factory=lambda: int(os.getenv("CORTEX_CACHE_TTL", "3600")))
+    cache_dir: str = field(default_factory=lambda: os.getenv("CORTEX_CACHE_DIR", ".llm_cache"))
 
     # Logging
-    log_level: str = field(default_factory=lambda: os.getenv(
-        "CORTEX_LOG_LEVEL", "INFO"
-    ))
-    log_file: Optional[str] = field(default_factory=lambda: os.getenv(
-        "CORTEX_LOG_FILE", None
-    ))
+    log_level: str = field(default_factory=lambda: os.getenv("CORTEX_LOG_LEVEL", "INFO"))
+    log_file: Optional[str] = field(default_factory=lambda: os.getenv("CORTEX_LOG_FILE", None))
 
     # Verbose mode
-    verbose: bool = field(default_factory=lambda: os.getenv(
-        "CORTEX_VERBOSE", "false"
-    ).lower() in ("true", "1", "yes"))
+    verbose: bool = field(default_factory=lambda: os.getenv("CORTEX_VERBOSE", "false").lower() in ("true", "1", "yes"))
 
     def to_dict(self) -> Dict[str, Any]:
         return {

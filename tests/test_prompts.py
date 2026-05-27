@@ -1,4 +1,5 @@
 """Tests for cortexchain.prompts.templates"""
+
 from cortexchain.prompts.templates import PromptTemplate
 
 

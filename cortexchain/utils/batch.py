@@ -1,4 +1,5 @@
 """Batch processing — run inputs through chains efficiently in batches."""
+
 import time
 from typing import Any, Callable, Dict, List, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -96,10 +97,7 @@ class BatchProcessor:
         else:
             # Parallel processing
             with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-                futures = {
-                    executor.submit(self._process_single, item, i): i
-                    for i, item in enumerate(inputs)
-                }
+                futures = {executor.submit(self._process_single, item, i): i for i, item in enumerate(inputs)}
                 for future in as_completed(futures):
                     result = future.result()
                     results.append(result)

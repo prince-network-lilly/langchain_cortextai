@@ -1,4 +1,5 @@
 """Tests for cortexchain.connection_pool"""
+
 import threading
 import time
 import pytest

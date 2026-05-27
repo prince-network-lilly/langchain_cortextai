@@ -1,4 +1,5 @@
 """API health check tool — batch-check multiple endpoints for uptime/latency."""
+
 import json
 import time
 from typing import Dict, List, Optional
@@ -64,7 +65,13 @@ class APIHealthCheckTool(BaseTool):
         except requests.exceptions.Timeout:
             return {"url": url, "status_code": None, "latency_ms": None, "healthy": False, "error": "Timeout"}
         except requests.exceptions.ConnectionError:
-            return {"url": url, "status_code": None, "latency_ms": None, "healthy": False, "error": "Connection refused"}
+            return {
+                "url": url,
+                "status_code": None,
+                "latency_ms": None,
+                "healthy": False,
+                "error": "Connection refused",
+            }
         except Exception as e:
             return {"url": url, "status_code": None, "latency_ms": None, "healthy": False, "error": str(e)}
 

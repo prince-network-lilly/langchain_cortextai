@@ -1,4 +1,5 @@
 """Profiling and telemetry hooks for measuring LLM and chain latency."""
+
 import time
 import threading
 from contextlib import contextmanager
@@ -10,6 +11,7 @@ from functools import wraps
 @dataclass
 class TimingRecord:
     """A single timing measurement."""
+
     name: str
     duration_ms: float
     timestamp: float
@@ -55,6 +57,7 @@ class Profiler:
 
     def track(self, name: str, **metadata):
         """Decorator to time a function."""
+
         def decorator(func):
             @wraps(func)
             def wrapper(*args, **kwargs):
@@ -67,7 +70,9 @@ class Profiler:
                 finally:
                     elapsed = (time.perf_counter() - start) * 1000
                     self._record(name, elapsed, metadata)
+
             return wrapper
+
         return decorator
 
     @contextmanager
@@ -94,7 +99,7 @@ class Profiler:
         with self._lock:
             self._records.append(record)
             if len(self._records) > self._max_records:
-                self._records = self._records[-self._max_records:]
+                self._records = self._records[-self._max_records :]
 
     def get_records(self, name: str = None) -> List[TimingRecord]:
         """Get timing records, optionally filtered by name."""
@@ -194,7 +199,7 @@ class LatencyTracker:
                 self._data[operation] = []
             self._data[operation].append(latency_ms)
             if len(self._data[operation]) > self._window_size:
-                self._data[operation] = self._data[operation][-self._window_size:]
+                self._data[operation] = self._data[operation][-self._window_size :]
 
     def slo_compliance(self, operation: str) -> float:
         """Return fraction of requests within SLO (0.0 to 1.0)."""

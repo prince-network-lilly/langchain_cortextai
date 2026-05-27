@@ -1,4 +1,5 @@
 """Make HTTP requests to external APIs."""
+
 import json
 from typing import Dict, Optional
 from cortexchain.tools.base import BaseTool
@@ -39,6 +40,7 @@ class HTTPRequestTool(BaseTool):
 
         if self.allowed_domains:
             from urllib.parse import urlparse
+
             domain = urlparse(url).netloc
             if not any(d in domain for d in self.allowed_domains):
                 return f"Error: Domain {domain!r} not in allowed list: {self.allowed_domains}"

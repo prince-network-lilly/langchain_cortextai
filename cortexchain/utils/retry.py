@@ -1,4 +1,5 @@
 """Retry and fallback utilities for resilient LLM calls."""
+
 import time
 import functools
 from dataclasses import dataclass, field
@@ -8,6 +9,7 @@ from typing import Callable, List, Optional, Tuple, Type
 @dataclass
 class RetryConfig:
     """Configuration for retry behavior."""
+
     max_retries: int = 3
     initial_delay: float = 1.0
     backoff_factor: float = 2.0
@@ -54,7 +56,9 @@ def retry(
                     delay *= config.backoff_factor
 
             raise last_exception
+
         return wrapper
+
     return decorator
 
 
@@ -78,9 +82,7 @@ class FallbackChain:
                 if self.verbose:
                     print(f"[Fallback] Chain #{i} failed: {e}")
 
-        raise RuntimeError(
-            f"All {len(self.chains)} chains failed:\n" + "\n".join(errors)
-        )
+        raise RuntimeError(f"All {len(self.chains)} chains failed:\n" + "\n".join(errors))
 
     def run(self, input_text: str) -> str:
         result = self.invoke({"input": input_text})

@@ -1,8 +1,12 @@
 """Tests for cortexchain.validation"""
+
 import pytest
 from cortexchain.validation import (
-    validate_inputs, validate_not_empty, validate_schema,
-    InputValidator, ValidationError,
+    validate_inputs,
+    validate_not_empty,
+    validate_schema,
+    InputValidator,
+    ValidationError,
 )
 
 

@@ -1,4 +1,5 @@
 """Pipeline monitoring tool for MLOps — check pipeline health, logs, and alerts."""
+
 import json
 import time
 from typing import Dict, List, Optional
@@ -114,9 +115,7 @@ class PipelineMonitorTool(BaseTool):
             return "No pipeline runs recorded."
         lines = []
         for r in recent:
-            lines.append(
-                f"[{r['timestamp']}] {r['pipeline']}: {r['status']} ({r['duration_sec']}s)"
-            )
+            lines.append(f"[{r['timestamp']}] {r['pipeline']}: {r['status']} ({r['duration_sec']}s)")
         return "\n".join(lines)
 
     def _check_alerts(self, params: Dict) -> str:
@@ -129,9 +128,7 @@ class PipelineMonitorTool(BaseTool):
             errors = [r for r in recent if r.get("status") == "failed"]
             error_rate = len(errors) / len(recent)
             if error_rate > threshold_error_rate:
-                alerts.append(
-                    f"HIGH ERROR RATE: {error_rate:.1%} of last {len(recent)} runs failed"
-                )
+                alerts.append(f"HIGH ERROR RATE: {error_rate:.1%} of last {len(recent)} runs failed")
 
             slow_runs = [r for r in recent if r.get("duration_sec", 0) > threshold_latency / 1000]
             if slow_runs:

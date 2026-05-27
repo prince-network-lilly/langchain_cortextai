@@ -1,4 +1,5 @@
 """Tests for cortexchain.schema"""
+
 from cortexchain.schema import LLMResult, Message, Document, GraphState, AgentAction, AgentFinish
 
 

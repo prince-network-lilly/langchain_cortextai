@@ -1,4 +1,5 @@
 """Experiment tracking tool for MLOps — log metrics, compare runs, manage experiments."""
+
 import json
 import os
 import time
@@ -117,8 +118,11 @@ class ExperimentTrackerTool(BaseTool):
         if not valid_runs:
             return f"No runs found with metric '{metric}'."
 
-        best = max(valid_runs, key=lambda r: r["metrics"][metric]) if maximize \
+        best = (
+            max(valid_runs, key=lambda r: r["metrics"][metric])
+            if maximize
             else min(valid_runs, key=lambda r: r["metrics"][metric])
+        )
 
         return json.dumps(best, indent=2)
 

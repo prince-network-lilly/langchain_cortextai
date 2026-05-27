@@ -101,9 +101,7 @@ class CompiledGraph:
 
         return END
 
-    def invoke(
-        self, state: Dict, config: Optional[Dict] = None, max_steps: int = 50
-    ) -> Dict:
+    def invoke(self, state: Dict, config: Optional[Dict] = None, max_steps: int = 50) -> Dict:
         """Execute the graph from entry point to END."""
         current_node = self.entry_point
         thread_id = (config or {}).get("thread_id", "default")
@@ -131,12 +129,15 @@ class CompiledGraph:
 
             # Checkpoint after each step
             if self.checkpointer:
-                self.checkpointer.save(thread_id, {
-                    "state": state,
-                    "current_node": current_node,
-                    "next_node": next_node,
-                    "step": step,
-                })
+                self.checkpointer.save(
+                    thread_id,
+                    {
+                        "state": state,
+                        "current_node": current_node,
+                        "next_node": next_node,
+                        "step": step,
+                    },
+                )
 
             current_node = next_node
             step += 1
@@ -144,9 +145,7 @@ class CompiledGraph:
         state["__steps__"] = step
         return state
 
-    def stream(
-        self, state: Dict, config: Optional[Dict] = None, max_steps: int = 50
-    ):
+    def stream(self, state: Dict, config: Optional[Dict] = None, max_steps: int = 50):
         """Generator that yields state after each node execution."""
         current_node = self.entry_point
         step = 0

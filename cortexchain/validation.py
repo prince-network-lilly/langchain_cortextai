@@ -1,4 +1,5 @@
 """Input validation utilities for chains and tools."""
+
 from functools import wraps
 from typing import Any, Callable, Dict, List, Optional, Set
 
@@ -78,9 +79,7 @@ def validate_schema(schema: Dict[str, type]):
                 errors = []
                 for key, expected_type in schema.items():
                     if key in inputs and not isinstance(inputs[key], expected_type):
-                        errors.append(
-                            f"'{key}' expected {expected_type.__name__}, got {type(inputs[key]).__name__}"
-                        )
+                        errors.append(f"'{key}' expected {expected_type.__name__}, got {type(inputs[key]).__name__}")
                 if errors:
                     raise ValidationError(errors)
             return func(*args, **kwargs)
