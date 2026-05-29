@@ -25,7 +25,8 @@ CortexChain lets you build AI-powered applications using familiar LangChain/Lang
 │ Router      │ Plan&Execute │ Checkpoint   │ BatchProcessor      │
 │ RAG (QA)    │ AgentExec    │ Human-Loop   │ Retry/Fallback      │
 │ MapReduce   │ Multi-Agent  │ Subgraphs    │ ConnectionPool      │
-│ Structured  │              │ Parallel     │ Profiler            │
+│ Structured  │ Debate       │ Parallel     │ Profiler            │
+│             │ Ensemble     │              │                     │
 ├─────────────┼──────────────┼──────────────┼─────────────────────┤
 │   Tools     │   Security   │  Prompts     │    Observability    │
 │             │              │              │                     │
@@ -198,7 +199,42 @@ supervisor = SupervisorAgent(llm=llm, workers=[researcher, writer])
 result = supervisor.run("Research AI trends and write a summary report")
 ```
 
-### 10. Performance Profiling
+### 10. Multi-Agent Debate (Deliberated Verdict)
+
+```python
+from cortexchain import CortexLLM, WorkerAgent, DebateAgent
+
+judge = CortexLLM("judge")
+optimist = WorkerAgent("optimist", "argues for the upside", CortexLLM("optimist"))
+skeptic  = WorkerAgent("skeptic",  "argues for the downside", CortexLLM("skeptic"))
+
+debate = DebateAgent(judge_llm=judge, debaters=[optimist, skeptic], rounds=2)
+result = debate.invoke({"input": "Should we migrate to Spark?"})
+
+print(result["verdict"])         # judged final answer
+print(result["reasoning_path"])  # how the judge weighed the debate
+result["rounds"]                 # per-round responses + cross-agent sentiment
+```
+
+### 11. Voting Ensemble (Single-Round Consensus)
+
+```python
+from cortexchain import CortexLLM, WorkerAgent, EnsembleAgent
+
+judge = CortexLLM("judge")
+a = WorkerAgent("a", "expert A", CortexLLM("a"))
+b = WorkerAgent("b", "expert B", CortexLLM("b"))
+c = WorkerAgent("c", "expert C", CortexLLM("c"))
+
+# vote_method="judge" (default) or "majority"
+ensemble = EnsembleAgent(debaters=[a, b, c], judge_llm=judge, vote_method="judge")
+result = ensemble.invoke({"input": "What's the capital of Australia?"})
+
+print(result["winner"], "—", result["reason"])
+print(result["output"])
+```
+
+### 12. Performance Profiling
 
 ```python
 from cortexchain.profiling import profiler, enable_profiling
@@ -221,7 +257,7 @@ print(profiler.summary())
 | **Chains** | `LLMChain`, `ConversationChain`, `SimpleSequentialChain`, `RouterChain`, `RetrievalQAChain`, `StructuredOutputChain`, `MapReduceChain`, `RefineChain` |
 | **Memory** | `ConversationBufferMemory`, `ConversationWindowMemory` |
 | **Tools** | `@tool` decorator, `PythonREPLTool`, `HTTPRequestTool`, `SQLDatabaseTool`, `ShellTool`, `ReadFileTool`, `WriteFileTool`, + 4 MLOps tools |
-| **Agents** | `ReActAgent`, `AgentExecutor`, `SupervisorAgent`/`WorkerAgent`, `PlanAndExecuteAgent` |
+| **Agents** | `ReActAgent`, `AgentExecutor`, `SupervisorAgent`/`WorkerAgent`, `PlanAndExecuteAgent`, `DebateAgent`, `EnsembleAgent` |
 | **Graph** | `StateGraph`, conditional edges, `MemoryCheckpointer`, `FileCheckpointer`, human-in-the-loop, subgraphs, parallel execution |
 | **Security** | `sanitize_input()`, `detect_injection()`, `SecurePromptTemplate`, `InputSanitizer`, `redact_sensitive()` |
 | **Utilities** | `@retry`, `FallbackChain`, `LLMCache`, `RateLimiter`, `BatchProcessor`, `ConnectionPool`, `Profiler` |
