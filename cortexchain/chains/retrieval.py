@@ -52,7 +52,9 @@ class RetrievalQAChain(BaseChain):
         return self.invoke({"question": question})["answer"]
 
     @classmethod
-    def from_llm_and_retriever(cls, llm: CortexLLM, retriever: TFIDFRetriever, **kwargs) -> "RetrievalQAChain":
+    def from_llm_and_retriever(
+        cls, llm: CortexLLM, retriever: TFIDFRetriever, **kwargs
+    ) -> "RetrievalQAChain":
         return cls(llm=llm, retriever=retriever, **kwargs)
 
     @property

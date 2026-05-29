@@ -1,5 +1,4 @@
 """Tests for cortexchain.memory.buffer"""
-
 from cortexchain.memory.buffer import ConversationBufferMemory, ConversationWindowMemory
 
 

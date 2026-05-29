@@ -47,7 +47,10 @@ class AgentExecutor:
 
                 tool_fn = self.tools.get(step.tool)
                 if tool_fn is None:
-                    observation = f"Unknown tool: {step.tool!r}. " f"Available tools: {list(self.tools.keys())}"
+                    observation = (
+                        f"Unknown tool: {step.tool!r}. "
+                        f"Available tools: {list(self.tools.keys())}"
+                    )
                 else:
                     observation = tool_fn.run(step.tool_input)
 

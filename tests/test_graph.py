@@ -1,5 +1,4 @@
 """Tests for cortexchain.graph.state_graph"""
-
 from cortexchain.graph.state_graph import StateGraph, CompiledGraph, END
 from cortexchain.graph.checkpoint import MemoryCheckpointer
 

@@ -1,5 +1,4 @@
 """Tests for cortexchain.async_support"""
-
 import asyncio
 import pytest
 from unittest.mock import patch, MagicMock
@@ -94,7 +93,9 @@ class TestAsyncSequentialChain:
             async def ainvoke(self, inputs):
                 return {**inputs, f"step_{self.suffix}": True}
 
-        chain = AsyncSequentialChain(chains=[FakeAsyncChain("a"), FakeAsyncChain("b")])
+        chain = AsyncSequentialChain(
+            chains=[FakeAsyncChain("a"), FakeAsyncChain("b")]
+        )
         result = await chain.ainvoke({"input": "test"})
         assert result["step_a"] is True
         assert result["step_b"] is True

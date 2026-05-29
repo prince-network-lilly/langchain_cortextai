@@ -1,5 +1,4 @@
 """SQL database query tool with safe read-only mode."""
-
 import json
 from typing import Optional
 from cortexchain.tools.base import BaseTool
@@ -33,7 +32,6 @@ class SQLDatabaseTool(BaseTool):
             raise ValueError("No connection_string or connection provided.")
 
         import sqlite3
-
         self._connection = sqlite3.connect(self.connection_string)
         return self._connection
 

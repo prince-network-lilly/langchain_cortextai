@@ -1,5 +1,4 @@
 """Tests for cortexchain.security"""
-
 import pytest
 from cortexchain.security import (
     detect_injection,
@@ -150,7 +149,10 @@ class TestRedactSensitive:
         assert "eyJhbG" not in result
 
     def test_custom_patterns(self):
-        result = redact_sensitive("Patient ID: PAT-12345", patterns={"patient_id": r"PAT-\d+"})
+        result = redact_sensitive(
+            "Patient ID: PAT-12345",
+            patterns={"patient_id": r"PAT-\d+"}
+        )
         assert "PAT-12345" not in result
         assert "[REDACTED_PATIENT_ID]" in result
 

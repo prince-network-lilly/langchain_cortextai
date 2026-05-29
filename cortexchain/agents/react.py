@@ -25,7 +25,9 @@ Begin!
 Question: {input}
 Thought:"""
 
-_ACTION_RE = re.compile(r"Action:\s*(.+?)\s*\nAction Input:\s*(.+?)(?:\n|$)", re.IGNORECASE)
+_ACTION_RE = re.compile(
+    r"Action:\s*(.+?)\s*\nAction Input:\s*(.+?)(?:\n|$)", re.IGNORECASE
+)
 _FINAL_RE = re.compile(r"Final Answer:\s*(.+)", re.IGNORECASE | re.DOTALL)
 
 
@@ -37,9 +39,13 @@ class ReActAgent:
         self.tools = {t.name: t for t in tools}
 
     def _tool_descriptions(self) -> str:
-        return "\n".join(f"- {t.name}: {t.description}" for t in self.tools.values())
+        return "\n".join(
+            f"- {t.name}: {t.description}" for t in self.tools.values()
+        )
 
-    def plan(self, scratchpad: str, question: str) -> Union[AgentAction, AgentFinish]:
+    def plan(
+        self, scratchpad: str, question: str
+    ) -> Union[AgentAction, AgentFinish]:
         """Send current state to LLM and parse its next step."""
         prompt = _REACT_TEMPLATE.format(
             tool_descriptions=self._tool_descriptions(),

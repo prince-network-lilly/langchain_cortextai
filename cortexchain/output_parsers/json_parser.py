@@ -14,7 +14,9 @@ class JSONOutputParser:
         try:
             result = json.loads(cleaned)
         except json.JSONDecodeError as e:
-            raise ValueError(f"Failed to parse JSON from LLM output: {e}\nOutput was:\n{text}")
+            raise ValueError(
+                f"Failed to parse JSON from LLM output: {e}\nOutput was:\n{text}"
+            )
         if self.schema:
             self._validate(result)
         return result
@@ -37,8 +39,13 @@ class JSONOutputParser:
 
     def get_format_instructions(self) -> str:
         if self.schema:
-            schema_str = json.dumps({k: f"<{v}>" for k, v in self.schema.items()}, indent=2)
-            return "Respond with a valid JSON object using this exact schema:\n" f"```json\n{schema_str}\n```"
+            schema_str = json.dumps(
+                {k: f"<{v}>" for k, v in self.schema.items()}, indent=2
+            )
+            return (
+                "Respond with a valid JSON object using this exact schema:\n"
+                f"```json\n{schema_str}\n```"
+            )
         return "Respond with a valid JSON object."
 
     def __repr__(self) -> str:

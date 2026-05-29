@@ -1,5 +1,4 @@
 """StructuredOutputChain — forces LLM to return valid JSON matching a schema."""
-
 import json
 from typing import Any, Dict, List, Optional
 
@@ -53,7 +52,10 @@ class StructuredOutputChain(BaseChain):
             except ValueError as e:
                 last_error = e
                 # Add error feedback to prompt for retry
-                prompt += f"\n\nYour previous response was invalid: {e}\n" "Please try again with ONLY valid JSON:"
+                prompt += (
+                    f"\n\nYour previous response was invalid: {e}\n"
+                    "Please try again with ONLY valid JSON:"
+                )
 
         return {
             "output": {},

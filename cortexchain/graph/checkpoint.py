@@ -50,4 +50,8 @@ class FileCheckpointer:
             os.remove(path)
 
     def list_threads(self):
-        return [f.replace(".json", "") for f in os.listdir(self.directory) if f.endswith(".json")]
+        return [
+            f.replace(".json", "")
+            for f in os.listdir(self.directory)
+            if f.endswith(".json")
+        ]

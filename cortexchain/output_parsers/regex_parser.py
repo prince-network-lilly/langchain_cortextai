@@ -13,7 +13,9 @@ class RegexParser:
     def parse(self, text: str) -> Dict[str, str]:
         match = self._regex.search(text)
         if not match:
-            raise ValueError(f"Could not parse output with pattern {self.pattern!r}.\nOutput was:\n{text}")
+            raise ValueError(
+                f"Could not parse output with pattern {self.pattern!r}.\nOutput was:\n{text}"
+            )
         result = match.groupdict()
         if not result:
             # Fall back to numbered groups

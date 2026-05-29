@@ -1,5 +1,4 @@
 """Streaming support — stream LLM responses and chain outputs."""
-
 from typing import Callable, Dict, Generator, Optional
 
 from cortexchain.llm.cortex import CortexLLM

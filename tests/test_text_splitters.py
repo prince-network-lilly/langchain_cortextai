@@ -1,5 +1,4 @@
 """Tests for cortexchain.text_splitters"""
-
 from cortexchain.text_splitters.character import CharacterTextSplitter
 from cortexchain.text_splitters.recursive import RecursiveCharacterTextSplitter
 from cortexchain.schema import Document
@@ -29,13 +28,17 @@ class TestCharacterTextSplitter:
 
 class TestRecursiveCharacterTextSplitter:
     def test_uses_first_separator(self):
-        splitter = RecursiveCharacterTextSplitter(separators=["\n\n", "\n", " "], chunk_size=50, chunk_overlap=0)
+        splitter = RecursiveCharacterTextSplitter(
+            separators=["\n\n", "\n", " "], chunk_size=50, chunk_overlap=0
+        )
         text = "Para one.\n\nPara two.\n\nPara three."
         chunks = splitter.split_text(text)
         assert len(chunks) >= 2
 
     def test_falls_through_separators(self):
-        splitter = RecursiveCharacterTextSplitter(separators=["\n\n", "\n", " "], chunk_size=15, chunk_overlap=0)
+        splitter = RecursiveCharacterTextSplitter(
+            separators=["\n\n", "\n", " "], chunk_size=15, chunk_overlap=0
+        )
         text = "This is a single long line without any paragraph breaks at all"
         chunks = splitter.split_text(text)
         assert all(len(c) <= 20 for c in chunks)  # Allow small overshoot

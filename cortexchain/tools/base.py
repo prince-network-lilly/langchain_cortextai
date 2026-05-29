@@ -45,7 +45,6 @@ def tool(_func: Optional[Callable] = None, *, name: str = None, description: str
         @tool(name="my_tool", description="Does something useful")
         def my_tool(input: str) -> str: ...
     """
-
     def decorator(func: Callable) -> FunctionTool:
         _name = name or func.__name__
         _desc = description or (func.__doc__ or f"Useful tool: {_name}").strip()

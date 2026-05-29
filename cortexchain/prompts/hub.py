@@ -1,5 +1,4 @@
 """Prompt Hub — a registry of reusable prompt templates."""
-
 import json
 import os
 from typing import Dict, List, Optional
@@ -92,7 +91,10 @@ class PromptHub:
 
     def list(self) -> List[Dict[str, str]]:
         """List all available prompts with their descriptions."""
-        return [{"name": name, "description": entry["description"]} for name, entry in sorted(self._prompts.items())]
+        return [
+            {"name": name, "description": entry["description"]}
+            for name, entry in sorted(self._prompts.items())
+        ]
 
     def search(self, keyword: str) -> List[Dict[str, str]]:
         """Search prompts by keyword in name or description."""

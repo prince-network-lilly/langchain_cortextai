@@ -1,5 +1,4 @@
 """Shell command execution tool."""
-
 import subprocess
 from cortexchain.tools.base import BaseTool
 
@@ -8,7 +7,10 @@ class ShellTool(BaseTool):
     """Executes shell commands and returns stdout/stderr."""
 
     name = "shell"
-    description = "Executes a shell command and returns the output. " "Input: the command to run. Use with caution."
+    description = (
+        "Executes a shell command and returns the output. "
+        "Input: the command to run. Use with caution."
+    )
 
     def __init__(self, timeout: int = 60, allowed_commands: list = None):
         self.timeout = timeout
@@ -22,7 +24,10 @@ class ShellTool(BaseTool):
         if self.allowed_commands:
             first_word = command.split()[0]
             if first_word not in self.allowed_commands:
-                return f"Error: Command '{first_word}' not in allowed list: " f"{self.allowed_commands}"
+                return (
+                    f"Error: Command '{first_word}' not in allowed list: "
+                    f"{self.allowed_commands}"
+                )
 
         try:
             result = subprocess.run(

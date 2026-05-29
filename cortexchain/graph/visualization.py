@@ -1,5 +1,4 @@
 """Graph visualization — ASCII representation of StateGraph structure."""
-
 from typing import Dict, List, Set
 from cortexchain.graph.state_graph import END
 

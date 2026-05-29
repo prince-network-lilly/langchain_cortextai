@@ -1,5 +1,4 @@
 """Plan-and-Execute agent — decomposes complex tasks into steps then executes them."""
-
 import re
 from typing import Dict, List, Optional
 
@@ -76,11 +75,16 @@ class PlanAndExecuteAgent:
             context = f"Objective: {objective}\nStep: {step}\nPrevious: {previous}"
             return self.executor.run(context)
         else:
-            prompt = _EXECUTOR_TEMPLATE.format(objective=objective, step=step, previous_results=previous)
+            prompt = _EXECUTOR_TEMPLATE.format(
+                objective=objective, step=step, previous_results=previous
+            )
             return self.llm(prompt)
 
     def _replan(self, objective: str, completed: List[Dict], remaining: List[str]) -> List[str]:
-        completed_str = "\n".join(f"  {i+1}. {c['step']} -> {c['result'][:100]}" for i, c in enumerate(completed))
+        completed_str = "\n".join(
+            f"  {i+1}. {c['step']} -> {c['result'][:100]}"
+            for i, c in enumerate(completed)
+        )
         remaining_str = "\n".join(f"  {i+1}. {s}" for i, s in enumerate(remaining))
 
         prompt = _REPLANNER_TEMPLATE.format(
@@ -119,7 +123,9 @@ class PlanAndExecuteAgent:
             if self.verbose:
                 print(f"\n[Execute Step {step_num + 1}] {current_step}")
 
-            previous_str = "; ".join(f"{c['step']}: {c['result'][:80]}" for c in completed[-3:])
+            previous_str = "; ".join(
+                f"{c['step']}: {c['result'][:80]}" for c in completed[-3:]
+            )
             result = self._execute_step(current_step, objective, previous_str)
             completed.append({"step": current_step, "result": result})
 

@@ -1,5 +1,4 @@
 """Data validation tool for MLOps — schema checks, null detection, drift detection."""
-
 import json
 from typing import Any, Dict, List, Optional
 from cortexchain.tools.base import BaseTool
@@ -70,7 +69,9 @@ class DataValidationTool(BaseTool):
             # Schema check
             if schema and col in schema:
                 expected_type = schema[col]
-                wrong_types = [v for v in non_null if type(v).__name__ != expected_type]
+                wrong_types = [
+                    v for v in non_null if type(v).__name__ != expected_type
+                ]
                 if wrong_types:
                     report["issues"].append(
                         f"Column '{col}': expected type '{expected_type}', "

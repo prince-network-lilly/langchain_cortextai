@@ -24,7 +24,9 @@ class CSVLoader:
             reader = csv.DictReader(f)
             for i, row in enumerate(reader):
                 if self.content_columns:
-                    content = " | ".join(f"{col}: {row.get(col, '')}" for col in self.content_columns)
+                    content = " | ".join(
+                        f"{col}: {row.get(col, '')}" for col in self.content_columns
+                    )
                 else:
                     content = " | ".join(f"{k}: {v}" for k, v in row.items())
 

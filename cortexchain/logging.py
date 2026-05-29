@@ -1,5 +1,4 @@
 """Logging integration for cortexchain — proper Python logging, not print()."""
-
 import logging
 import sys
 from typing import Optional

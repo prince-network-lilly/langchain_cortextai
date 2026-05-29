@@ -4,7 +4,9 @@ from cortexchain.schema import LLMResult
 try:
     from light_client import LIGHTClient
 except ImportError as e:
-    raise ImportError("light_client is required. Install it in your environment before using CortexLLM.") from e
+    raise ImportError(
+        "light_client is required. Install it in your environment before using CortexLLM."
+    ) from e
 
 
 class CortexLLM:

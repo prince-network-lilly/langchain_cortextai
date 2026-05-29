@@ -1,5 +1,4 @@
 """Integration tests — test full chains end-to-end with mocked Cortex API."""
-
 import pytest
 from unittest.mock import patch, MagicMock, call
 from cortexchain.llm.cortex import CortexLLM

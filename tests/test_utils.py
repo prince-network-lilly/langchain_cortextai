@@ -1,5 +1,4 @@
 """Tests for cortexchain.utils (cache, rate_limiter, batch)"""
-
 import os
 import time
 import tempfile

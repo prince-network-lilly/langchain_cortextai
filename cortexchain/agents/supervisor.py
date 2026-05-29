@@ -1,5 +1,4 @@
 """Multi-agent system — supervisor delegates tasks to specialized worker agents."""
-
 import re
 from typing import Callable, Dict, List, Optional
 
@@ -69,7 +68,9 @@ class SupervisorAgent:
         self.verbose = verbose
 
     def _worker_descriptions(self) -> str:
-        return "\n".join(f"- {w.name}: {w.description}" for w in self.workers.values())
+        return "\n".join(
+            f"- {w.name}: {w.description}" for w in self.workers.values()
+        )
 
     def invoke(self, inputs: Dict) -> Dict:
         user_input = inputs.get("input", "")
