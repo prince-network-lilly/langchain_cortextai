@@ -60,10 +60,10 @@ jobs:
           pip install flake8 black isort
 
       - name: Check formatting with black
-        run: black --check --target-version py39 --line-length 120 cortexchain/ tests/
+        run: black --check cortexchain/ tests/
 
       - name: Check import ordering
-        run: isort --check-only --profile black --line-length 120 cortexchain/ tests/
+        run: isort --check-only cortexchain/ tests/
 
       - name: Lint
         run: flake8 cortexchain/ --max-line-length=120 --ignore=E501,W503,E203

@@ -17,11 +17,3 @@ dev = ["pytest", "pytest-cov", "pytest-mock", "pytest-asyncio", "flake8", "black
 
 [tool.setuptools.packages.find]
 where = ["."]
-
-[tool.black]
-line-length = 120
-target-version = ["py39", "py310", "py311", "py312"]
-
-[tool.isort]
-profile = "black"
-line_length = 120
