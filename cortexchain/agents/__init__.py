@@ -2,6 +2,8 @@ from cortexchain.agents.react import ReActAgent
 from cortexchain.agents.executor import AgentExecutor
 from cortexchain.agents.supervisor import SupervisorAgent, WorkerAgent
 from cortexchain.agents.plan_and_execute import PlanAndExecuteAgent
+from cortexchain.agents.debate import DebateAgent
+from cortexchain.agents.ensemble import EnsembleAgent
 
 __all__ = [
     "ReActAgent",
@@ -9,4 +11,6 @@ __all__ = [
     "SupervisorAgent",
     "WorkerAgent",
     "PlanAndExecuteAgent",
+    "DebateAgent",
+    "EnsembleAgent",
 ]

@@ -447,6 +447,78 @@ agent = PlanAndExecuteAgent(
 result = agent.run("Get last month's model performance metrics and create a trend chart")
 ```
 
+### Debate Agent (Multi-Round Deliberation)
+
+Broadcasts a prompt to several agents, lets them critique each other across
+rounds, scores cross-agent sentiment, and has an impartial judge synthesize the
+final verdict and the reasoning path that led to it.
+
+```python
+from cortexchain import CortexLLM, WorkerAgent, DebateAgent
+
+judge = CortexLLM(agent_name="judge")
+optimist = WorkerAgent("optimist", "argues for the upside", CortexLLM("optimist"))
+skeptic  = WorkerAgent("skeptic",  "argues for the downside", CortexLLM("skeptic"))
+pragmatist = WorkerAgent("pragmatist", "weighs cost vs. value", CortexLLM("pragmatist"))
+
+debate = DebateAgent(
+    judge_llm=judge,
+    debaters=[optimist, skeptic, pragmatist],
+    rounds=2,         # opening + N-1 rebuttal rounds
+    verbose=True,
+)
+
+result = debate.invoke({"input": "Should we migrate the data pipeline to Spark?"})
+
+print(result["verdict"])          # final optimal answer
+print(result["reasoning_path"])   # judge's path to the verdict
+result["rounds"]                  # per-round responses + cross-agent sentiment matrix
+result["transcript"]              # flattened full transcript
+```
+
+Each round captures every debater's response and a `rater -> ratee -> {stance, confidence, rationale}` sentiment matrix using each debater's *own* LLM (so the score reflects that agent's perspective). The final verdict and reasoning path come from the impartial `judge_llm`.
+
+### Ensemble Agent (Voting / Consensus)
+
+Lighter-weight cousin of `DebateAgent` — broadcasts the prompt to N agents in a
+single round and picks one winning answer. No rebuttal, no sentiment matrix.
+
+**Judge mode** (default — best for free-form answers):
+
+```python
+from cortexchain import CortexLLM, WorkerAgent, EnsembleAgent
+
+judge = CortexLLM("judge")
+a = WorkerAgent("expert_a", "domain expert A", CortexLLM("a"))
+b = WorkerAgent("expert_b", "domain expert B", CortexLLM("b"))
+c = WorkerAgent("expert_c", "domain expert C", CortexLLM("c"))
+
+ensemble = EnsembleAgent(
+    debaters=[a, b, c],
+    judge_llm=judge,
+    vote_method="judge",
+)
+result = ensemble.invoke({"input": "What's the capital of Australia?"})
+
+print(result["winner"])      # "expert_b"
+print(result["reason"])      # one-sentence justification from the judge
+print(result["output"])      # the winning answer text
+result["candidates"]         # {agent_name: response} for every agent
+```
+
+**Majority mode** (best for short/categorical answers; falls back to judge on ties if `judge_llm` is provided):
+
+```python
+ensemble = EnsembleAgent(
+    debaters=[a, b, c],
+    judge_llm=judge,            # optional — used only to break ties
+    vote_method="majority",
+)
+result = ensemble.invoke({"input": "Yes or no — is Pluto a planet?"})
+
+print(result["votes"])       # {agent_name: count} per distinct normalized answer
+```
+
 ### Built-in Tools
 
 ```python
@@ -1284,6 +1356,7 @@ from cortexchain import (
 
     # Agents
     ReActAgent, AgentExecutor, SupervisorAgent, WorkerAgent, PlanAndExecuteAgent,
+    DebateAgent, EnsembleAgent,
 
     # Graph
     StateGraph, END, MemoryCheckpointer, FileCheckpointer,
