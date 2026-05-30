@@ -8,6 +8,11 @@ from cortexchain.tools.experiment_tracker import ExperimentTrackerTool
 from cortexchain.tools.pipeline_monitor import PipelineMonitorTool
 from cortexchain.tools.api_health import APIHealthCheckTool
 from cortexchain.tools.shell import ShellTool
+from cortexchain.tools.servicenow import (
+    ChangeRequestSearchTool,
+    ServiceRequestSearchTool,
+    IncidentSearchTool,
+)
 
 __all__ = [
     "BaseTool",
@@ -24,4 +29,7 @@ __all__ = [
     "PipelineMonitorTool",
     "APIHealthCheckTool",
     "ShellTool",
+    "ChangeRequestSearchTool",
+    "ServiceRequestSearchTool",
+    "IncidentSearchTool",
 ]
