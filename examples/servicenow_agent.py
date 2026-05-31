@@ -1,41 +1,29 @@
-"""ServiceNow search agent — picks the right tool (CR/SR/INC) for the user's
-question, builds a query, and returns a synthesized answer.
+import os
+from cortexchain import CortexLLM
+from cortexchain.agents import ServiceNowAgent
 
-Env required:
-    SNOW_INSTANCE_URL   e.g. https://lillyprod.service-now.com
-    SNOW_USER
-    SNOW_PASS
-"""
+llm = CortexLLM(agent_name="mydemo-prince-l103669")
 
-from cortexchain import CortexLLM, ReActAgent, AgentExecutor
-from cortexchain.tools.servicenow import (
-    ChangeRequestSearchTool,
-    ServiceRequestSearchTool,
-    IncidentSearchTool,
+snow = ServiceNowAgent(
+    llm=llm,
+    instance_url = os.getenv("SNOW_INSTANCE_URL", ""),
+    user = os.getenv("SNOW_USER", ""),
+    password = os.getenv("SNOW_PASS", ""),
+    assignment_group = os.getenv("SNOW_DEFAULT_ASSIGNMENT_GROUP", "GCCP-CMO-GLB")
 )
 
+QUESTIONS = [
+    # Exercises: incident routing + custom limit + custom field set.
+    "Give me the top 3 open incidents — only show number, description and priority.",
+    # Exercises: change-request routing + ordering by a non-default column.
+    "List 5 most recently updated change requests, sorted by latest.",
+    # Exercises: service-request routing + filter by requested_for.
+    "Show me service requests which are assign to Jaimin, limit 5.",
+]
 
-def main():
-    llm = CortexLLM(agent_name="servicenow-search-agent")
+for q in QUESTIONS:
+    print(f"\n=== Q: {q}")
+    print(snow.ask(q))
 
-    tools = [
-        ChangeRequestSearchTool(),
-        ServiceRequestSearchTool(),
-        IncidentSearchTool(),
-    ]
-
-    agent = ReActAgent(llm=llm, tools=tools)
-    executor = AgentExecutor(agent=agent, tools=tools, verbose=True, max_iterations=5)
-
-    questions = [
-        "Show me the open critical incidents related to VPN from this week.",
-        "Any pending service requests for laptop access in finance?",
-        "List recent change requests about database migration.",
-    ]
-    for q in questions:
-        print("\n=== Q:", q)
-        print(executor.run(q))
-
-
-if __name__ == "__main__":
-    main()
+# print(snow.ask("top 5 open incidents assigned to Jaimin"))
+# print(snow.ask("recent change requests this week"))
